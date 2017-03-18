@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage 
+	xmlns="http://xamarin.com/schemas/2014/forms" 
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+	x:Class="Core.Views.ProfileView"
+	Title="Perfil"
+>
+	<ContentPage.ToolbarItems>
+		<ToolbarItem 
+			Text="Salvar"
+			Command="{Binding SaveCommand}"
+		/>
+	</ContentPage.ToolbarItems>
+	
+	<ContentPage.Content>
+		<StackLayout Margin="20">
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="100" />
+					<ColumnDefinition Width="*" />
+				</Grid.ColumnDefinitions>
+
+				<StackLayout
+					Grid.Column="0"
+				>
+					<Image 
+						Source="profile.png"
+						HeightRequest="80"
+					/>
+
+					<ActivityIndicator 
+						IsRunning="true"
+						IsVisible="true"
+						HorizontalOptions="Center"
+						VerticalOptions="Center"
+						Margin="0, -55, 0, 0"
+						Color="White"
+					/>
+				</StackLayout>
+
+				<StackLayout
+					Grid.Column="1"
+				>
+					<Entry 
+						Text="{Binding Attendee.Name}"
+						Placeholder="Nome"
+					/>
+
+					<Entry 
+						Text="{Binding Attendee.Email}"
+						Placeholder="Email"
+					/>
+				</StackLayout>
+			</Grid>
+
+			<Button 
+				Text="Apagar"
+				Command="{Binding DeleteCommand}"
+				IsVisible="{Binding CanDelete}"
+			/>
+		</StackLayout>
+	</ContentPage.Content>
+</ContentPage>

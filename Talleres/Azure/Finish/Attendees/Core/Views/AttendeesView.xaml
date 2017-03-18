@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage 
+	xmlns="http://xamarin.com/schemas/2014/forms" 
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+	x:Class="Core.Views.AttendeesView"
+	Title="Participantes"
+>
+	<ContentPage.ToolbarItems>
+		<ToolbarItem 
+			Text="Adicionar"
+			Command="{Binding AddProfileCommand}"
+		/>
+	</ContentPage.ToolbarItems>
+	
+	<ContentPage.Content>
+		<ListView
+			ItemsSource="{Binding Attendees}"
+			CachingStrategy="RecycleElement"
+			IsPullToRefreshEnabled="true"
+			RefreshCommand="{Binding LoadAttendeesCommand}"
+			IsRefreshing="{Binding IsBusy, Mode=OneWay}"
+			ItemTapped="OnItemTapped"
+		>
+			<ListView.ItemTemplate>
+				<DataTemplate>
+					<TextCell 
+						Text="{Binding Name}"
+						Detail="{Binding Email}" 
+					/>
+				</DataTemplate>
+			</ListView.ItemTemplate>
+		</ListView>
+	</ContentPage.Content>
+</ContentPage>
