@@ -23,14 +23,20 @@
 				<StackLayout
 					Grid.Column="0"
 				>
+					<StackLayout.GestureRecognizers>
+						<TapGestureRecognizer 
+							Command="{Binding ChangePhotoCommand}"
+						/>
+					</StackLayout.GestureRecognizers>
+					
 					<Image 
-						Source="profile.png"
+						Source="{Binding Photo}"
 						HeightRequest="80"
 					/>
 
 					<ActivityIndicator 
-						IsRunning="true"
-						IsVisible="true"
+						IsRunning="{Binding IsLoadingPhoto}"
+						IsVisible="{Binding IsLoadingPhoto}"
 						HorizontalOptions="Center"
 						VerticalOptions="Center"
 						Margin="0, -55, 0, 0"

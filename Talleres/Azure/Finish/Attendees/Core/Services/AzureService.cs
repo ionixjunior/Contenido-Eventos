@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using Core.Models;
 using Core.Plugins;
@@ -26,6 +27,21 @@ namespace Core.Services
 		public async Task Delete(AttendeeModel attendeeModel)
 		{
 			await AzureMobilePlugin.Instance.Delete(attendeeModel);
+		}
+
+		public async Task SavePhoto(Stream stream, string name)
+		{
+			await AzureStoragePlugin.Instance.UploadFile(stream, name);
+		}
+
+		public async Task<byte[]> LoadPhoto(string name)
+		{
+			return await AzureStoragePlugin.Instance.DownloadFile(name);
+		}
+
+		public async Task DeletePhoto(string name)
+		{
+			await AzureStoragePlugin.Instance.DeleteFile(name);
 		}
 	}
 }

@@ -24,5 +24,10 @@ namespace Core.Helpers
 		{
 			return await GetNavigation().DisplayAlert(title, message, buttonYes, buttonNo);
 		}
+
+		public async Task<string> ShowOptions(string title, string cancel, string destruction, string[] buttons)
+		{
+			return await GetNavigation().DisplayActionSheet(title, cancel, destruction, buttons);
+		}
 	}
 }
