@@ -14,10 +14,20 @@ namespace Core.iOS
 		{
 			global::Xamarin.Forms.Forms.Init();
 			Microsoft.WindowsAzure.MobileServices.CurrentPlatform.Init();
+			BuildStyles();
 
 			LoadApplication(new App());
 
 			return base.FinishedLaunching(app, options);
+		}
+
+		private void BuildStyles()
+		{
+			UINavigationBar.Appearance.BarTintColor = UIColor.FromRGB(75, 65, 185);
+			UINavigationBar.Appearance.TintColor = UIColor.White;
+			UINavigationBar.Appearance.SetTitleTextAttributes(
+				new UITextAttributes() { TextColor = UIColor.White }
+			);
 		}
 	}
 }

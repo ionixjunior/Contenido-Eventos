@@ -42,5 +42,20 @@ namespace Core.Plugins
 
 			return await CrossMedia.Current.PickPhotoAsync(options);
 		}
+
+		public async Task<MediaFile> TakePhotoAsync(StoreCameraMediaOptions options = null)
+		{
+			await Initialize();
+
+			if (options == null)
+			{
+				options = new StoreCameraMediaOptions()
+				{
+					CompressionQuality = 5
+				};
+			}
+
+			return await CrossMedia.Current.TakePhotoAsync(options);
+		}
 	}
 }

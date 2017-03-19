@@ -224,6 +224,19 @@ namespace Core.ViewModels
 					}
 				}
 
+				if (response == textoTirarFoto)
+				{
+					if (await MediaPlugin.Instance.IsCameraAvailable() == false)
+						throw new Exception("Parece que seu dispositivo não possui câmera ou não foi possível acessá-la.");
+
+					var file = await MediaPlugin.Instance.TakePhotoAsync();
+					if (file != null)
+					{
+						Photo = ImageSource.FromFile(file.Path);
+						_photoStream = file.GetStream();
+					}
+				}
+
 				if (response == textoApagar)
 				{
 					await AzureService.Instance.DeletePhoto(Attendee.PhotoName);
