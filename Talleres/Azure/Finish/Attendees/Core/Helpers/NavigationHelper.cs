@@ -19,7 +19,7 @@ namespace Core.Helpers
 
 		public async Task GotoProfile(AttendeeModel attendeeModel)
 		{
-			await GetMainPage().PushAsync(new ProfileView(attendeeModel));
+			await GetMainPage().PushAsync(new DetailsView(attendeeModel));
 		}
 
 		public async Task GoBack()

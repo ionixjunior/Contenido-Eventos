@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Core.Models;
@@ -7,12 +6,12 @@ using Core.Plugins;
 
 namespace Core.Services
 {
-	public class AzureService
+	public class ServerService
 	{
-		private static AzureService _instance;
-		public static AzureService Instance => _instance ?? (_instance = new AzureService());
+		private static ServerService _instance;
+		public static ServerService Instance => _instance ?? (_instance = new ServerService());
 
-		private AzureService() {}
+		private ServerService() {}
 
 		public async Task<IList<AttendeeModel>> GetAttendees()
 		{

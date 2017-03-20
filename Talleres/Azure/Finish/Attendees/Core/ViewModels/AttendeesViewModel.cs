@@ -45,7 +45,7 @@ namespace Core.ViewModels
 			{
 				IsBusy = true;
 				Attendees = new ObservableCollection<AttendeeModel>(
-					await AzureService.Instance.GetAttendees()
+					await ServerService.Instance.GetAttendees()
 				);
 			}
 			catch (Exception e)

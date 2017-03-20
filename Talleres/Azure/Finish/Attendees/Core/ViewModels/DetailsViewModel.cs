@@ -10,7 +10,7 @@ using Xamarin.Forms;
 
 namespace Core.ViewModels
 {
-	public class ProfileViewModel : BaseViewModel
+	public class DetailsViewModel : BaseViewModel
 	{
 		private AttendeeModel _attendee;
 		public AttendeeModel Attendee
@@ -70,7 +70,7 @@ namespace Core.ViewModels
 		public ICommand LoadPhotoCommand
 			=> new Command(async () => await LoadPhoto());
 
-		public ProfileViewModel(AttendeeModel attendeeModel)
+		public DetailsViewModel(AttendeeModel attendeeModel)
 		{
 			Attendee = attendeeModel;
 			LoadDefaultPhoto();
@@ -111,10 +111,10 @@ namespace Core.ViewModels
 					if (string.IsNullOrEmpty(Attendee.PhotoName))
 						Attendee.PhotoName = Guid.NewGuid().ToString();
 					
-					await AzureService.Instance.SavePhoto(_photoStream, Attendee.PhotoName);
+					await ServerService.Instance.SavePhoto(_photoStream, Attendee.PhotoName);
 				}
 
-				await AzureService.Instance.Save(Attendee);
+				await ServerService.Instance.Save(Attendee);
 			}
 			catch (Exception e)
 			{
@@ -161,9 +161,9 @@ namespace Core.ViewModels
 				IsBusy = true;
 
 				if (string.IsNullOrEmpty(Attendee.PhotoName) == false)
-					await AzureService.Instance.DeletePhoto(Attendee.PhotoName);
+					await ServerService.Instance.DeletePhoto(Attendee.PhotoName);
 
-				await AzureService.Instance.Delete(Attendee);
+				await ServerService.Instance.Delete(Attendee);
 			}
 			catch (Exception e)
 			{
@@ -239,7 +239,7 @@ namespace Core.ViewModels
 
 				if (response == textoApagar)
 				{
-					await AzureService.Instance.DeletePhoto(Attendee.PhotoName);
+					await ServerService.Instance.DeletePhoto(Attendee.PhotoName);
 					Attendee.PhotoName = null;
 					LoadDefaultPhoto();
 				}
@@ -272,7 +272,7 @@ namespace Core.ViewModels
 			try
 			{
 				IsLoadingPhoto = true;
-				var bytes = await AzureService.Instance.LoadPhoto(Attendee.PhotoName);
+				var bytes = await ServerService.Instance.LoadPhoto(Attendee.PhotoName);
 				Photo = ImageSource.FromStream(() =>
 				{
 					return new MemoryStream(bytes);
