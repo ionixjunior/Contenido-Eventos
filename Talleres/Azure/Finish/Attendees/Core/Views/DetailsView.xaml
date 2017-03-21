@@ -3,67 +3,41 @@
 	xmlns="http://xamarin.com/schemas/2014/forms" 
 	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
 	x:Class="Core.Views.DetailsView"
-	Title="Detalhes"
+	Title="Details"
 >
 	<ContentPage.ToolbarItems>
 		<ToolbarItem 
-			Text="Salvar"
+			Text="Save"
 			Command="{Binding SaveCommand}"
 		/>
 	</ContentPage.ToolbarItems>
 	
 	<ContentPage.Content>
-		<StackLayout Margin="20">
-			<Grid>
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="100" />
-					<ColumnDefinition Width="*" />
-				</Grid.ColumnDefinitions>
+		<ScrollView Padding="10">
+		    <StackLayout Spacing="10">
+				<Image Source="{Binding Photo}" HeightRequest="80">
+			        <Image.GestureRecognizers>
+			            <TapGestureRecognizer 
+			                Command="{Binding ChangePhotoCommand}"
+			            />
+			        </Image.GestureRecognizers>
+			    </Image>
+				
+		        <Entry
+				    Text="{Binding Attendee.Name}"
+				    Placeholder="Name"
+				/>
 
-				<StackLayout
-					Grid.Column="0"
-				>
-					<StackLayout.GestureRecognizers>
-						<TapGestureRecognizer 
-							Command="{Binding ChangePhotoCommand}"
-						/>
-					</StackLayout.GestureRecognizers>
-					
-					<Image 
-						Source="{Binding Photo}"
-						HeightRequest="80"
-					/>
+				<Entry
+				    Text="{Binding Attendee.Email}"
+				    Placeholder="E-mail"
+				/>
 
-					<ActivityIndicator 
-						IsRunning="{Binding IsLoadingPhoto}"
-						IsVisible="{Binding IsLoadingPhoto}"
-						HorizontalOptions="Center"
-						VerticalOptions="Center"
-						Margin="0, -55, 0, 0"
-						Color="White"
-					/>
-				</StackLayout>
-
-				<StackLayout
-					Grid.Column="1"
-				>
-					<Entry 
-						Text="{Binding Attendee.Name}"
-						Placeholder="Nome"
-					/>
-
-					<Entry 
-						Text="{Binding Attendee.Email}"
-						Placeholder="Email"
-					/>
-				</StackLayout>
-			</Grid>
-
-			<Button 
-				Text="Apagar"
-				Command="{Binding DeleteCommand}"
-				IsVisible="{Binding CanDelete}"
-			/>
-		</StackLayout>
+				<Button 
+			        Text="Delete"
+			        Command="{Binding DeleteCommand}"
+			    />
+		    </StackLayout>    
+		</ScrollView>
 	</ContentPage.Content>
 </ContentPage>

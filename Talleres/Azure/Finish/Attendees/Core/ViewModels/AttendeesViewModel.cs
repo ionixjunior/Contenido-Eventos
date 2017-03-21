@@ -16,9 +16,6 @@ namespace Core.ViewModels
 		public ICommand GetAttendeesCommand 
 			=> new Command(async () => await GetAttendees());
 
-		public ICommand OpenProfileCommand 
-			=> new Command<AttendeeModel>(async (attendeeModel) => await OpenProfile(attendeeModel));
-
 		public ICommand AddAttendeeCommand
 			=> new Command(async () => await AddAttendee());
 
@@ -49,11 +46,6 @@ namespace Core.ViewModels
 			{
 				IsBusy = false;
 			}
-		}
-
-		private async Task OpenProfile(AttendeeModel attendeeModel)
-		{
-			await NavigationHelper.Instance.GotoDetails(attendeeModel);
 		}
 
 		private async Task AddAttendee()

@@ -1,4 +1,6 @@
-﻿using Core.ViewModels;
+﻿using Core.Helpers;
+using Core.Models;
+using Core.ViewModels;
 using Xamarin.Forms;
 
 namespace Core.Views
@@ -13,10 +15,11 @@ namespace Core.Views
 			BindingContext = _viewModel;
 		}
 
-		void OnItemTapped(object sender, ItemTappedEventArgs e)
+		private async void OnItemTapped(object sender, ItemTappedEventArgs e)
 		{
 			(sender as ListView).SelectedItem = null;
-			_viewModel.OpenProfileCommand.Execute(e.Item);
+			var attendeeModel = e.Item as AttendeeModel;
+			await NavigationHelper.Instance.GotoDetails(attendeeModel);
 		}
 	}
 }

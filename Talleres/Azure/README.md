@@ -13,6 +13,8 @@ This solution contains 4 projects
 * Droid - Xamarin.Android application
 * iOS - Xamarin.iOS application
 
+TODO - TROCAR IMAGEM
+
 ![Solution](http://content.screencast.com/users/JamesMontemagno/folders/Jing/media/44f4caa9-efb9-4405-95d4-7341608e1c0a/Portable.png)
 
 The **Attendees** project also has blank code files and XAML pages that we will use during the Hands on Lab.
@@ -24,6 +26,8 @@ All projects have the required NuGet packages already installed, so there will b
 This can be done by **Right-clicking** on the **Solution** and clicking on **Restore NuGet packages...**
 
 If you use Xamarin Studio in the Mac, probably the packages are restored automatically.
+
+TODO - TROCAR IMAGEM
 
 ![Restore NuGets](http://content.screencast.com/users/JamesMontemagno/folders/Jing/media/a31a6bff-b45d-4c60-a602-1359f984e80b/2016-07-11_1328.png)
 
@@ -46,7 +50,7 @@ The **AttendeesViewModel.cs** will provide all of the functionality for how our 
 
 *INotifyPropertyChanged* is important for data binding in MVVM Frameworks. This is an interface that, when implemented, lets our view know about changes to the model.
 
-By default, every own view models will be inherit from **BaseViewModel**. So, we will implement **INotifyPropertyChanged** in base class.
+By default, every own viewmodels will be inherit from **BaseViewModel**. So, we will implement **INotifyPropertyChanged** in base class.
 
 Update:
 
@@ -145,7 +149,7 @@ public class AttendeesViewModel : BaseViewModel
 
 We will use an **ObservableCollection<Attendee>** that will be cleared and then loaded with attendees. We will use an **ObservableCollection** because it has built-in support for **CollectionChanged** events when we Add or Remove from it. This is very nice so we don't have to call **OnPropertyChanged** each time.
 
-Above the constructor of the AttenddesViewModel class definition, declare an auto-property:
+Above the constructor of the AttendeesViewModel class definition, declare an auto-property:
 
 ```csharp
 public ObservableCollection<Attendee> Attendees { get; set; }
@@ -162,7 +166,7 @@ public AttendeeViewModel()
 
 #### GetAttendees Method
 
-We are now set to create a method named **GetAttendees** which will retrieve the ateendee data from the internet. We will first implement this with a simply HTTP request, but later update it to grab and sync the data from Azure!
+We are now set to create a method named **GetAttendees** which will retrieve the attendee data from the internet. We will first implement this with a simply HTTP request, but later update it to grab and sync the data from Azure!
 
 First, create a method called **GetAttendees** which is of type *async Task* (it is a Task because it is using Async methods):
 
@@ -222,7 +226,7 @@ using(var client = new HttpClient())
 }
 ```
 
-Still inside of the **using**, we will Deserialize the json and turn it into a list of Speakers with Json.NET:
+Still inside of the **using**, we will Deserialize the json and turn it into a list of Attendees with Json.NET:
 
 ```csharp
 var items = JsonConvert.DeserializeObject<List<Attendee>>(json);
@@ -297,7 +301,7 @@ Create a new Command called **GetAttendeesCommand**:
 public Command GetAttendeesCommand { get; set; }
 ```
 
-Inside of the `AttendeesViewModel` constructor, create the `GetAttendeesCommand` and pass it two methods: one to invoke when the command is executed and another that determines whether the command is enabled. Both methods can be implemented as lambda expressions as shown below:
+Inside of the `AttendeesViewModel` constructor, create the `GetAttendeesCommand` and pass it one method to invoke when the command is executed:
 
 ```csharp
 GetAttendeesCommand = new Command(
@@ -318,7 +322,7 @@ For the first page we will add a few vertically-stacked controls to the page. We
   </StackLayout>
 ```
 
-This will be the container where all of the child controls will go. Notice that we specified the children should have no space in between them.
+This will be the container where all of the child controls will go.
 
 Next, let's add a Button that has a binding to the **LoadAttendeesCommand** that we created (see below). The command takes the place of a clicked handler and will be executed whenever the user taps the button.
 
@@ -332,7 +336,7 @@ Under the button we can display a loading bar when we are gathering data from th
 <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}"/>
 ```
 
-We will use a ListView that binds to the Speakers collection to display all of the items. We can use a special property called *x:Name=""* to name any control:
+We will use a ListView that binds to the Attendees collection to display all of the items:
 
 ```xml
 <ListView
@@ -341,7 +345,7 @@ We will use a ListView that binds to the Speakers collection to display all of t
 </ListView>
 ```
 
-We still need to describe what each item looks like, and to do so, we can use an ItemTemplate that has a DataTemplate with a specific View inside of it. Xamarin.Forms contains a few default Cells that we can use, and we will use the **TextCell** that has an image and two rows of text.
+We still need to describe what each item looks like, and to do so, we can use an ItemTemplate that has a DataTemplate with a specific View inside of it. Xamarin.Forms contains a few default Cells that we can use, and we will use the **TextCell** that has two rows of text.
 
 Replace <!--Add ItemTemplate Here--> with:
 
@@ -354,7 +358,6 @@ Replace <!--Add ItemTemplate Here--> with:
     </DataTemplate>
 </ListView.ItemTemplate>
 ```
-Xamarin.Forms will automatically download, cache, and display the image from the server.
 
 ### Connect the View with the ViewModel
 As we have bound some elements of the View to ViewModel properties, we have to tell the View now, which ViewModel to bind against. For this, we have to set the `BindingContext` to the `AttendeesViewModel`, we created. Open the `AttendeesView.xaml.cs` file and see, that we already did this binding for you.
@@ -424,7 +427,8 @@ In the code-behind you will declare **OnItemTapped** event to receive data. The 
 private async void OnItemTapped(object sender, ItemTappedEventArgs e)
 {
     (sender as ListView).SelectedItem = null;
-	await Navigation.PushAsync(new DetailView(e.Item));
+    var attendeeModel = e.Item as AttendeeModel;
+	await NavigationHelper.Instance.GotoDetails(attendeeModel);
 }
 ```
 
@@ -594,7 +598,7 @@ This is an elegant way to centralize all configuration of your app.
 ### Update AzureMobileService.cs
 We will be using the [Azure Mobile Apps SDK](https://azure.microsoft.com/en-us/documentation/articles/app-service-mobile-xamarin-forms-get-started/) to add an Azure back end to our mobile app in just a few lines of code.
 
-In the Core/Services/AzureMobileService.cs file exists in the **Initializer**. The Initialize logic will setup our database and create our `IMobileServiceSyncTable<AttendeesModel>` table that we can use to get attendee data from Azure. There are just two methods that we need to fill in to get and sync data from the server.
+In the Core/Services/AzureMobileService.cs file exists the **Initializer**. The Initialize logic will setup our database and create our `IMobileServiceSyncTable<AttendeesModel>` table that we can use to get attendee data from Azure. There are just two methods that we need to fill in to get and sync data from the server.
 
 Pay attention, **AppConfig.DatabaseName** and **AppConfig.MobileAppUri** configured above is referenced in this method for make configuration correctly.
 
@@ -648,10 +652,10 @@ public async Task GetAttendees()
 	try
 	{
 		IsBusy = true;
-        Attendees.Clear();
-
         var items = await AzureMobileService.Instance.GetAttendees();
-		foreach (var item in items)
+
+		Attendees.Clear();
+        foreach (var item in items)
     		Attendees.Add(item);
 	}
 	catch (Exception e)
@@ -839,6 +843,9 @@ public class DetailsViewModel : BaseViewModel
     	if (IsBusy)
 			return;
 
+        if (string.IsNullOrEmpty(Attendee.Id))
+		    return;
+
         var delete = await MessageHelper.Instance.ShowAsk(
 			"Delete attendee",
 			"You sure delete this attendee?",
@@ -885,7 +892,7 @@ Congratulations! You finish CRUD operations!
 
 ## Connect to Azure Blob Storage
 
-For use Azure Blob Store you need Windows Azure Storage SDK to perform operations. With this SDK, we can upload, download and delete files in the Azure Blob Storage. In our app, we take photo profile for attendee and use SDK to send data to the cloud.
+For use Azure Blob Store you need Windows Azure Storage SDK to perform operations. With this SDK, you can upload, download and delete files in the Azure Blob Storage. In our app, we take photo profile for attendee and use SDK to send data to the cloud.
 
 ### Prepare Azure
 Go back to Azure and search for Storage account:
@@ -896,8 +903,8 @@ After select storage account, confirm creation:
 
 ![Create storage account](https://content.screencast.com/users/ionixjunior/folders/XamarinFest/media/7ee82927-19e4-4f70-aa76-547afd077a5e/create-storage-account.png)
 
-For finish, insert basic information about your storage account
-Pay attention in the name of your storage account. You need this for configure app integration. The name used in the sample is **xamarinfesttest**.
+For finish, insert basic information about your storage account.
+Pay attention in the name of your storage account. You need this for configure app integration. The name used in the sample is **xamarinfesttest**. Select account king to blob storage and existing resource group created recently.
 
 ![Create storage account - finish](https://content.screencast.com/users/ionixjunior/folders/XamarinFest/media/b325b1f9-2aa2-4a5f-acad-c5928ac75ed3/configure-storage-account.png)
 
@@ -909,7 +916,9 @@ We need provide some informations in account key for configure app:
 
 * Protocol: The protocol of http requests ( http|https )
 * Account name: is the name of your storage account
-* Account key: for get a key, click in key icon and copy one of keys available. See below.
+* Account key: for get a key, click in key icon and copy one of keys available.
+
+See below:
 
 ![Get key](https://content.screencast.com/users/ionixjunior/folders/XamarinFest/media/9f7879a9-f09c-4516-94db-cc836cd4f038/configure-keys.png)
 
@@ -1073,6 +1082,12 @@ catch (Exception e)
 }
 ```
 
+One more thing: in the above code the photo from camera or gallery is assign to **Photo** property to display in the view, but for push to Azure, we need of stream of file. So, for this, we create a new property in this class to store stream of the photo, and assign in **_photoStream** to use later.
+
+```csharp
+private Stream _photoStream;
+```
+
 After this, we need implement **AzureStorageService.cs** to perform operations in Azure.
 
 In this file, the constructor create a storage account instance and get a reference for image container. Exists more three methods: UploadFile, DownloadFile and DeleteFile.
@@ -1116,10 +1131,10 @@ try
 	IsBusy = true;
 
 	if (string.IsNullOrEmpty(Attendee.Name))
-		throw new Exception("O nome deve ser preenchido");
+		throw new Exception("The name is required");
 
 	if (string.IsNullOrEmpty(Attendee.Email))
-		throw new Exception("O e-mail deve ser preenchido");
+		throw new Exception("The e-mail is required");
 
 	await AzureMobileService.Instance.SaveAttendee(Attendee);
 }
@@ -1137,10 +1152,10 @@ try
 	IsBusy = true;
 
 	if (string.IsNullOrEmpty(Attendee.Name))
-		throw new Exception("O nome deve ser preenchido");
+		throw new Exception("The name is required");
 
 	if (string.IsNullOrEmpty(Attendee.Email))
-		throw new Exception("O e-mail deve ser preenchido");
+		throw new Exception("The e-mail is required");
 
 	if (_photoStream != null)
 	{
@@ -1212,4 +1227,6 @@ Congratulations! You finish hands on lab!
 ## And more... Some tips
 
 * Listview Caching Strategy
+* Pull to refresh in listview
+* Menu context actions in listview
 * Master detail pages / tabbed pages

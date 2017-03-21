@@ -23,17 +23,6 @@ namespace Core.ViewModels
 			}
 		}
 
-		private bool _canDelete;
-		public bool CanDelete
-		{
-			get { return _canDelete; }
-			set
-			{
-				_canDelete = value;
-				OnPropertyChanged();
-			}
-		}
-
 		private object _photo;
 		public object Photo
 		{
@@ -74,12 +63,6 @@ namespace Core.ViewModels
 		{
 			Attendee = attendeeModel;
 			LoadDefaultPhoto();
-
-			if (string.IsNullOrEmpty(Attendee.Id))
-				CanDelete = false;
-			else
-				CanDelete = true;
-
 			GetPhotoCommand.Execute(null);
 		}
 
@@ -101,10 +84,10 @@ namespace Core.ViewModels
 				IsBusy = true;
 
 				if (string.IsNullOrEmpty(Attendee.Name))
-					throw new Exception("O nome deve ser preenchido");
+					throw new Exception("The name is required");
 
 				if (string.IsNullOrEmpty(Attendee.Email))
-					throw new Exception("O e-mail deve ser preenchido");
+					throw new Exception("The e-mail is required");
 				
 				if (_photoStream != null)
 				{
@@ -129,7 +112,7 @@ namespace Core.ViewModels
 			if (exception != null)
 			{
 				await MessageHelper.Instance.ShowMessage(
-					"Ocorreu um erro",
+					"An error has occurred",
 					exception.Message,
 					"Ok"
 				);
@@ -144,11 +127,14 @@ namespace Core.ViewModels
 			if (IsBusy)
 				return;
 
+			if (string.IsNullOrEmpty(Attendee.Id))
+				return;
+
 			var delete = await MessageHelper.Instance.ShowAsk(
-				"Apagar perfil",
-				"Tem certeza que quer apagar o perfil?",
-				"Sim",
-				"Não"
+				"Delete",
+				"You sure want to delete?",
+				"Yes",
+				"No"
 			);
 
 			if (delete == false)
@@ -178,7 +164,7 @@ namespace Core.ViewModels
 			if (exception != null)
 			{
 				await MessageHelper.Instance.ShowMessage(
-					"Ocorreu um erro",
+					"An error has occurred",
 					exception.Message,
 					"Ok"
 				);
@@ -190,31 +176,31 @@ namespace Core.ViewModels
 
 		private async Task ChangePhoto()
 		{
-			var textoTirarFoto = "Tirar foto";
-			var textoAbrirGaleria = "Abrir galeria";
-			var textoCancelar = "Cancelar";
-			var textoApagar = "Apagar";
+			var textTakePicture = "Take picture";
+			var textOpenGallery = "Open gallery";
+			var textCancel = "Cancel";
+			var textDelete = "Delete";
 
-			var actions = new string[] { textoTirarFoto, textoAbrirGaleria };
+			var actions = new string[] { textTakePicture, textOpenGallery };
 
 			var response = await MessageHelper.Instance.ShowOptions(
-				"O que deseja fazer com sua imagem?",
-				textoCancelar,
-				textoApagar,
+				"What you whant to do?",
+				textCancel,
+				textDelete,
 				actions
 			);
 
-			if (response == textoCancelar)
+			if (response == textCancel)
 				return;
 
 			Exception exception = null;
 
 			try
 			{
-				if (response == textoAbrirGaleria)
+				if (response == textOpenGallery)
 				{
 					if (await MediaService.Instance.IsPickPhotoSupported() == false)
-						throw new Exception("Não foi possível abrir a galeria de imagens");
+						throw new Exception("Is not possible open image gallery");
 
 					var file = await MediaService.Instance.PickPhotoAsync();
 					if (file != null)
@@ -224,10 +210,10 @@ namespace Core.ViewModels
 					}
 				}
 
-				if (response == textoTirarFoto)
+				if (response == textTakePicture)
 				{
 					if (await MediaService.Instance.IsCameraAvailable() == false)
-						throw new Exception("Parece que seu dispositivo não possui câmera ou não foi possível acessá-la.");
+						throw new Exception("Camera is not available on your device");
 
 					var file = await MediaService.Instance.TakePhotoAsync();
 					if (file != null)
@@ -237,7 +223,7 @@ namespace Core.ViewModels
 					}
 				}
 
-				if (response == textoApagar)
+				if (response == textDelete)
 				{
 					await AzureStorageService.Instance.DeleteFile(Attendee.PhotoName);
 					Attendee.PhotoName = null;
@@ -253,7 +239,7 @@ namespace Core.ViewModels
 			if (exception != null)
 			{
 				await MessageHelper.Instance.ShowMessage(
-					"Algo está errado",
+					"Something is wrong",
 					exception.Message,
 					"Ok"
 				);
@@ -274,7 +260,7 @@ namespace Core.ViewModels
 				IsLoadingPhoto = true;
 				var bytes = await AzureStorageService.Instance.DownloadFile(Attendee.PhotoName);
 				if (bytes == null)
-					throw new Exception("Sem imagem para carregar");
+					throw new Exception("No image to load");
 				
 				Photo = ImageSource.FromStream(() =>
 				{

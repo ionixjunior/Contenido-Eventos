@@ -3,32 +3,40 @@
 	xmlns="http://xamarin.com/schemas/2014/forms" 
 	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
 	x:Class="Core.Views.AttendeesView"
-	Title="Participantes"
+	Title="Attendees"
 >
 	<ContentPage.ToolbarItems>
 		<ToolbarItem 
-			Text="Adicionar"
+			Text="Add"
 			Command="{Binding AddAttendeeCommand}"
 		/>
 	</ContentPage.ToolbarItems>
 	
 	<ContentPage.Content>
-		<ListView
-			ItemsSource="{Binding Attendees}"
-			CachingStrategy="RecycleElement"
-			IsPullToRefreshEnabled="true"
-			RefreshCommand="{Binding GetAttendeesCommand}"
-			IsRefreshing="{Binding IsBusy, Mode=OneWay}"
-			ItemTapped="OnItemTapped"
-		>
-			<ListView.ItemTemplate>
-				<DataTemplate>
-					<TextCell 
-						Text="{Binding Name}"
-						Detail="{Binding Email}" 
-					/>
-				</DataTemplate>
-			</ListView.ItemTemplate>
-		</ListView>
+		<StackLayout>
+			<Button 
+				Text="Sync Attendees" 
+				Command="{Binding GetAttendeesCommand}"
+			/>
+
+			<ActivityIndicator 
+				IsRunning="{Binding IsBusy}" 
+				IsVisible="{Binding IsBusy}"
+			/>
+			
+			<ListView
+				ItemsSource="{Binding Attendees}"
+				ItemTapped="OnItemTapped"
+			>
+				<ListView.ItemTemplate>
+					<DataTemplate>
+						<TextCell 
+							Text="{Binding Name}"
+							Detail="{Binding Email}" 
+						/>
+					</DataTemplate>
+				</ListView.ItemTemplate>
+			</ListView>
+		</StackLayout>
 	</ContentPage.Content>
 </ContentPage>
