@@ -1,5 +1,7 @@
 ## Xamarin Fest Hands On Lab - Azure
 
+IMPORTANT: This guide was inspired in step by step of Xamarin Dev Days, created by James Montemagno.
+
 Today, we will be building a [Xamarin.Forms](http://xamarin.com/forms) application using Azure platform to store data in the cloud. This application will display a list of attendees at Xamarin Fest and show their details. We will start by building some business logic backend that pulls down json from a RESTful endpoint and then we will connect it to an Azure Mobile App backend in just a few lines of code. We will also use Blob Storage to save profile photos of attendees.
 
 
@@ -580,6 +582,48 @@ Nice! We have a REST API working. You can test using curl or Postman, will works
 
 Now, go back to Xamarin app and implement Azure Mobile Client.
 
+### Updating AttendeeModel
+
+We create a new table with some fields, ok? But, how Azure Mobile SDK know tables and fields to load and save data in the app? Its important to mapping the model with table name and fields created. Lets go:
+
+update
+
+```csharp
+public class AttendeeModel
+{
+    public string Id { get; set; }
+    public string Name { get; set; }
+    public string Email { get; set; }
+    public string PhotoName { get; set; }
+
+    [Version]
+    public string Version { get; set; } // no change this, is important for Azure
+}
+```
+
+to
+
+```csharp
+[DataTable("attendees")]
+public class AttendeeModel
+{
+    [JsonProperty("id")]
+    public string Id { get; set; }
+
+    [JsonProperty("name")]
+    public string Name { get; set; }
+
+    [JsonProperty("email")]
+    public string Email { get; set; }
+
+    [JsonProperty("photo_name")]
+    public string PhotoName { get; set; }
+
+    [Version]
+    public string Version { get; set; } // no change this, is important for Azure
+}
+```
+
 ### Database name and mobile API URI
 
 In the project, exists a static class called **AppConfig**. We will configure **DatabaseName** and **MobileAppUri** with information about the service created. Update this values with information of your service.
@@ -885,6 +929,17 @@ public class DetailsViewModel : BaseViewModel
 
 		await NavigationHelper.Instance.GoBack();
     }
+}
+```
+
+To finish, we need implement delete command in **AzureMobileService.cs** class:
+
+```csharp
+public async Task DeleteAttendee(AttendeeModel attendeeModel)
+{
+	await Initialize();
+    await _attendee.DeleteAsync(attendeeModel);
+    await SyncAttendees();
 }
 ```
 
