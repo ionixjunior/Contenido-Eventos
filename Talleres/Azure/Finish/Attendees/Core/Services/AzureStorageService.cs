@@ -1,19 +1,18 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Threading.Tasks;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
 
-namespace Core.Plugins
+namespace Core.Services
 {
-	public class AzureStoragePlugin
+	public class AzureStorageService
 	{
-		private static AzureStoragePlugin _instance;
-		public static AzureStoragePlugin Instance => _instance ?? (_instance = new AzureStoragePlugin());
+		private static AzureStorageService _instance;
+		public static AzureStorageService Instance => _instance ?? (_instance = new AzureStorageService());
 
 		public CloudBlobContainer ImageContainer { get; private set; }
 
-		private AzureStoragePlugin() 
+		private AzureStorageService() 
 		{
 			var account = CloudStorageAccount.Parse(AppConfig.StorageAppConfig);
 			var client = account.CreateCloudBlobClient();

@@ -17,7 +17,7 @@ namespace Core.Helpers
 			return Application.Current.MainPage as NavigationPage;
 		}
 
-		public async Task GotoProfile(AttendeeModel attendeeModel)
+		public async Task GotoDetails(AttendeeModel attendeeModel)
 		{
 			await GetMainPage().PushAsync(new DetailsView(attendeeModel));
 		}

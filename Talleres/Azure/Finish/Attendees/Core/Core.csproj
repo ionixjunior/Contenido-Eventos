@@ -47,17 +47,16 @@
     <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="ViewModels\AttendeesViewModel.cs" />
     <Compile Include="Helpers\LogHelper.cs" />
-    <Compile Include="Services\ServerService.cs" />
     <Compile Include="Views\DetailsView.xaml.cs">
       <DependentUpon>DetailsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\DetailsViewModel.cs" />
     <Compile Include="Helpers\NavigationHelper.cs" />
     <Compile Include="Helpers\MessageHelper.cs" />
-    <Compile Include="Plugins\AzureMobilePlugin.cs" />
     <Compile Include="AppConfig.cs" />
-    <Compile Include="Plugins\AzureStoragePlugin.cs" />
-    <Compile Include="Plugins\MediaPlugin.cs" />
+    <Compile Include="Services\AzureMobileService.cs" />
+    <Compile Include="Services\AzureStorageService.cs" />
+    <Compile Include="Services\MediaService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Net.Http" />
@@ -71,7 +70,6 @@
     <Folder Include="Models\" />
     <Folder Include="Helpers\" />
     <Folder Include="Services\" />
-    <Folder Include="Plugins\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Project="..\packages\Xamarin.Forms.2.3.3.193\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20\Xamarin.Forms.targets" Condition="Exists('..\packages\Xamarin.Forms.2.3.3.193\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20\Xamarin.Forms.targets')" />

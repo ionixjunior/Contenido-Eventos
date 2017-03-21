@@ -13,12 +13,6 @@ namespace Core.Views
 			BindingContext = _viewModel;
 		}
 
-		protected override async void OnAppearing()
-		{
-			base.OnAppearing();
-			await _viewModel.OnAppearing();
-		}
-
 		void OnItemTapped(object sender, ItemTappedEventArgs e)
 		{
 			(sender as ListView).SelectedItem = null;

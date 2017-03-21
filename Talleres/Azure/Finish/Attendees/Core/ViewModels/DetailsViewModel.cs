@@ -67,8 +67,8 @@ namespace Core.ViewModels
 		public ICommand ChangePhotoCommand 
 			=> new Command(async () => await ChangePhoto());
 
-		public ICommand LoadPhotoCommand
-			=> new Command(async () => await LoadPhoto());
+		public ICommand GetPhotoCommand
+			=> new Command(async () => await GetPhoto());
 
 		public DetailsViewModel(AttendeeModel attendeeModel)
 		{
@@ -80,7 +80,7 @@ namespace Core.ViewModels
 			else
 				CanDelete = true;
 
-			LoadPhotoCommand.Execute(null);
+			GetPhotoCommand.Execute(null);
 		}
 
 		public void LoadDefaultPhoto()
@@ -111,10 +111,10 @@ namespace Core.ViewModels
 					if (string.IsNullOrEmpty(Attendee.PhotoName))
 						Attendee.PhotoName = Guid.NewGuid().ToString();
 					
-					await ServerService.Instance.SavePhoto(_photoStream, Attendee.PhotoName);
+					await AzureStorageService.Instance.UploadFile(_photoStream, Attendee.PhotoName);
 				}
 
-				await ServerService.Instance.Save(Attendee);
+				await AzureMobileService.Instance.SaveAttendee(Attendee);
 			}
 			catch (Exception e)
 			{
@@ -161,9 +161,9 @@ namespace Core.ViewModels
 				IsBusy = true;
 
 				if (string.IsNullOrEmpty(Attendee.PhotoName) == false)
-					await ServerService.Instance.DeletePhoto(Attendee.PhotoName);
+					await AzureStorageService.Instance.DeleteFile(Attendee.PhotoName);
 
-				await ServerService.Instance.Delete(Attendee);
+				await AzureMobileService.Instance.DeleteAttendee(Attendee);
 			}
 			catch (Exception e)
 			{
@@ -213,10 +213,10 @@ namespace Core.ViewModels
 			{
 				if (response == textoAbrirGaleria)
 				{
-					if (await MediaPlugin.Instance.IsPickPhotoSupported() == false)
+					if (await MediaService.Instance.IsPickPhotoSupported() == false)
 						throw new Exception("Não foi possível abrir a galeria de imagens");
 
-					var file = await MediaPlugin.Instance.PickPhotoAsync();
+					var file = await MediaService.Instance.PickPhotoAsync();
 					if (file != null)
 					{
 						Photo = ImageSource.FromFile(file.Path);
@@ -226,10 +226,10 @@ namespace Core.ViewModels
 
 				if (response == textoTirarFoto)
 				{
-					if (await MediaPlugin.Instance.IsCameraAvailable() == false)
+					if (await MediaService.Instance.IsCameraAvailable() == false)
 						throw new Exception("Parece que seu dispositivo não possui câmera ou não foi possível acessá-la.");
 
-					var file = await MediaPlugin.Instance.TakePhotoAsync();
+					var file = await MediaService.Instance.TakePhotoAsync();
 					if (file != null)
 					{
 						Photo = ImageSource.FromFile(file.Path);
@@ -239,7 +239,7 @@ namespace Core.ViewModels
 
 				if (response == textoApagar)
 				{
-					await ServerService.Instance.DeletePhoto(Attendee.PhotoName);
+					await AzureStorageService.Instance.DeleteFile(Attendee.PhotoName);
 					Attendee.PhotoName = null;
 					LoadDefaultPhoto();
 				}
@@ -261,7 +261,7 @@ namespace Core.ViewModels
 			}
 		}
 
-		private async Task LoadPhoto()
+		private async Task GetPhoto()
 		{
 			if (IsLoadingPhoto)
 				return;
@@ -272,7 +272,10 @@ namespace Core.ViewModels
 			try
 			{
 				IsLoadingPhoto = true;
-				var bytes = await ServerService.Instance.LoadPhoto(Attendee.PhotoName);
+				var bytes = await AzureStorageService.Instance.DownloadFile(Attendee.PhotoName);
+				if (bytes == null)
+					throw new Exception("Sem imagem para carregar");
+				
 				Photo = ImageSource.FromStream(() =>
 				{
 					return new MemoryStream(bytes);

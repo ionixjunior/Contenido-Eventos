@@ -11,32 +11,23 @@ namespace Core.ViewModels
 {
 	public class AttendeesViewModel : BaseViewModel
 	{
-		private ObservableCollection<AttendeeModel> _attendees;
-		public ObservableCollection<AttendeeModel> Attendees
-		{
-			get { return _attendees; }
-			set
-			{
-				_attendees = value;
-				OnPropertyChanged();
-			}
-		}
+		public ObservableCollection<AttendeeModel> Attendees { get; set; }
 
-		public ICommand LoadAttendeesCommand 
-			=> new Command(async () => await LoadAttendees());
+		public ICommand GetAttendeesCommand 
+			=> new Command(async () => await GetAttendees());
 
 		public ICommand OpenProfileCommand 
 			=> new Command<AttendeeModel>(async (attendeeModel) => await OpenProfile(attendeeModel));
 
-		public ICommand AddProfileCommand
-			=> new Command(async () => await AddProfile());
+		public ICommand AddAttendeeCommand
+			=> new Command(async () => await AddAttendee());
 
-		public async Task OnAppearing()
+		public AttendeesViewModel()
 		{
-			await LoadAttendees();
+			Attendees = new ObservableCollection<AttendeeModel>();
 		}
 
-		public async Task LoadAttendees()
+		public async Task GetAttendees()
 		{
 			if (IsBusy)
 				return;
@@ -44,9 +35,11 @@ namespace Core.ViewModels
 			try
 			{
 				IsBusy = true;
-				Attendees = new ObservableCollection<AttendeeModel>(
-					await ServerService.Instance.GetAttendees()
-				);
+				Attendees.Clear();
+
+				var items = await AzureMobileService.Instance.GetAttendees();
+				foreach (var item in items)
+					Attendees.Add(item);
 			}
 			catch (Exception e)
 			{
@@ -60,12 +53,12 @@ namespace Core.ViewModels
 
 		private async Task OpenProfile(AttendeeModel attendeeModel)
 		{
-			await NavigationHelper.Instance.GotoProfile(attendeeModel);
+			await NavigationHelper.Instance.GotoDetails(attendeeModel);
 		}
 
-		private async Task AddProfile()
+		private async Task AddAttendee()
 		{
-			await NavigationHelper.Instance.GotoProfile(new AttendeeModel());
+			await NavigationHelper.Instance.GotoDetails(new AttendeeModel());
 		}
 	}
 }

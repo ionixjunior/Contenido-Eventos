@@ -8,7 +8,7 @@
 	<ContentPage.ToolbarItems>
 		<ToolbarItem 
 			Text="Adicionar"
-			Command="{Binding AddProfileCommand}"
+			Command="{Binding AddAttendeeCommand}"
 		/>
 	</ContentPage.ToolbarItems>
 	
@@ -17,7 +17,7 @@
 			ItemsSource="{Binding Attendees}"
 			CachingStrategy="RecycleElement"
 			IsPullToRefreshEnabled="true"
-			RefreshCommand="{Binding LoadAttendeesCommand}"
+			RefreshCommand="{Binding GetAttendeesCommand}"
 			IsRefreshing="{Binding IsBusy, Mode=OneWay}"
 			ItemTapped="OnItemTapped"
 		>

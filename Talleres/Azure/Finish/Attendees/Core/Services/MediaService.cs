@@ -4,12 +4,12 @@ using Plugin.Media.Abstractions;
 
 namespace Core.Plugins
 {
-	public class MediaPlugin
+	public class MediaService
 	{
-		private static MediaPlugin _instance;
-		public static MediaPlugin Instance => _instance ?? (_instance = new MediaPlugin());
+		private static MediaService _instance;
+		public static MediaService Instance => _instance ?? (_instance = new MediaService());
 
-		private MediaPlugin() {}
+		private MediaService() {}
 
 		private async Task<bool> Initialize()
 		{
