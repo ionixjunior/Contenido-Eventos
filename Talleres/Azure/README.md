@@ -15,9 +15,7 @@ This solution contains 4 projects
 * Droid - Xamarin.Android application
 * iOS - Xamarin.iOS application
 
-TODO - TROCAR IMAGEM
-
-![Solution](http://content.screencast.com/users/JamesMontemagno/folders/Jing/media/44f4caa9-efb9-4405-95d4-7341608e1c0a/Portable.png)
+![Solution](https://content.screencast.com/users/ionixjunior/folders/XamarinFest/media/2a6c402b-8901-4b0c-8945-4f9bf13bc891/visual-studio-projeto.PNG)
 
 The **Attendees** project also has blank code files and XAML pages that we will use during the Hands on Lab.
 
@@ -29,13 +27,11 @@ This can be done by **Right-clicking** on the **Solution** and clicking on **Res
 
 If you use Xamarin Studio in the Mac, probably the packages are restored automatically.
 
-TODO - TROCAR IMAGEM
-
-![Restore NuGets](http://content.screencast.com/users/JamesMontemagno/folders/Jing/media/a31a6bff-b45d-4c60-a602-1359f984e80b/2016-07-11_1328.png)
+![Restore NuGets](https://content.screencast.com/users/ionixjunior/folders/XamarinFest/media/d0a169ba-150b-4017-bea0-92ad9ed402b9/visual-studio-nuget-restore.png)
 
 ### Model
 
-We will be pulling down information about attendees. Open the **Attendees/Models/Attendee.cs** file and add the following properties inside of the **Attendee** class:
+We will be pulling down information about attendees. Open the **Attendees/Models/AttendeeModel.cs** file and add the following properties inside of the **AttendeeModel** class:
 
 ```csharp
 public string Id { get; set; }
@@ -147,14 +143,14 @@ public class AttendeesViewModel : BaseViewModel
 ```
 
 
-#### ObservableCollection of Attendee
+#### ObservableCollection of AttendeeModel
 
-We will use an **ObservableCollection<Attendee>** that will be cleared and then loaded with attendees. We will use an **ObservableCollection** because it has built-in support for **CollectionChanged** events when we Add or Remove from it. This is very nice so we don't have to call **OnPropertyChanged** each time.
+We will use an **ObservableCollection<AttendeeModel>** that will be cleared and then loaded with attendees. We will use an **ObservableCollection** because it has built-in support for **CollectionChanged** events when we Add or Remove from it. This is very nice so we don't have to call **OnPropertyChanged** each time.
 
 Above the constructor of the AttendeesViewModel class definition, declare an auto-property:
 
 ```csharp
-public ObservableCollection<Attendee> Attendees { get; set; }
+public ObservableCollection<AttendeeModel> Attendees { get; set; }
 ```
 
 Inside of the constructor, create a new instance of the `ObservableCollection`:
@@ -162,7 +158,7 @@ Inside of the constructor, create a new instance of the `ObservableCollection`:
 ```csharp
 public AttendeeViewModel()
 {
-    Attendees = new ObservableCollection<Attendee>();
+    Attendees = new ObservableCollection<AttendeeModel>();
 }
 ```
 
@@ -231,7 +227,7 @@ using(var client = new HttpClient())
 Still inside of the **using**, we will Deserialize the json and turn it into a list of Attendees with Json.NET:
 
 ```csharp
-var items = JsonConvert.DeserializeObject<List<Attendee>>(json);
+var items = JsonConvert.DeserializeObject<List<AttendeeModel>>(json);
 ```
 
 Still inside of the **using**, we will clear the attendees and then load them into the ObservableCollection:
@@ -268,7 +264,7 @@ private async Task GetAttendees()
             var json = await client.GetStringAsync("https://demo8270147.mockable.io/attendees");
 
             //Deserialize json
-            var items = JsonConvert.DeserializeObject<List<Attendee>>(json);
+            var items = JsonConvert.DeserializeObject<List<AttendeeModel>>(json);
 
             //Load attendees into list
             Attendees.Clear();
@@ -423,7 +419,7 @@ Now, we add an event in our listview. In **AttendeesView.xaml** we add **ItemTap
 </ListView>
 ```
 
-In the code-behind you will declare **OnItemTapped** event to receive data. The page is **AttendeesView.xaml.cs**. Implement this method so it navigates to the DetailsView passing Attendee object tapped:
+In the code-behind you will declare **OnItemTapped** event to receive data. The page is **AttendeesView.xaml.cs**. Implement this method so it navigates to the DetailsView passing AttendeeModel object tapped:
 
 ```csharp
 private async void OnItemTapped(object sender, ItemTappedEventArgs e)
@@ -642,7 +638,7 @@ This is an elegant way to centralize all configuration of your app.
 ### Update AzureMobileService.cs
 We will be using the [Azure Mobile Apps SDK](https://azure.microsoft.com/en-us/documentation/articles/app-service-mobile-xamarin-forms-get-started/) to add an Azure back end to our mobile app in just a few lines of code.
 
-In the Core/Services/AzureMobileService.cs file exists the **Initializer**. The Initialize logic will setup our database and create our `IMobileServiceSyncTable<AttendeesModel>` table that we can use to get attendee data from Azure. There are just two methods that we need to fill in to get and sync data from the server.
+In the Core/Services/AzureMobileService.cs file exists the **Initializer**. The Initialize logic will setup our database and create our `IMobileServiceSyncTable<AttendeeModel>` table that we can use to get attendee data from Azure. There are just two methods that we need to fill in to get and sync data from the server.
 
 Pay attention, **AppConfig.DatabaseName** and **AppConfig.MobileAppUri** configured above is referenced in this method for make configuration correctly.
 
